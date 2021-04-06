@@ -1,0 +1,38 @@
+apiVersion: install.istio.io/v1alpha1
+kind: IstioOperator
+spec:
+  addonComponents:
+    grafana:
+      enabled: true
+    istiocoredns:
+      enabled: false
+    tracing:
+      enabled: true
+    prometheus:
+      enabled: true
+    kiali:
+      enabled: true
+  components:
+    egressGateways:
+      - enabled: false
+    ingressGateways:
+      - enabled: true
+    base:
+      enabled: true
+    cni:
+      enabled: false
+    istiodRemote:
+      enabled: false
+  values:
+    sidecarInjectorWebhook:
+      rewriteAppHTTPProbe: true
+    gateways:
+      istio-ingressgateway:
+        serviceAnnotations:
+          service.beta.kubernetes.io/aws-load-balancer-type: "nlb"
+          service.beta.kubernetes.io/aws-load-balancer-internal: "true"
+          service.beta.kubernetes.io/aws-load-balancer-backend-protocol: http
+          service.beta.kubernetes.io/aws-load-balancer-ssl-cert: arn:aws:acm:ap-northeast-2:058475846659:certificate/df4fb82a-32a9-4ee5-9aeb-0c483b85b2e0
+          service.beta.kubernetes.io/aws-load-balancer-ssl-ports: "https"
+          external-dns.alpha.kubernetes.io/hostname: web.kimdragon50.ml,emp.kimdragon50.ml,kiali.kimdragon50.ml,grafana.kimdragon50.ml
+          #service.beta.kubernetes.io/load-balancer-source-ranges: "10.144.0.0/16"

@@ -5,4 +5,4 @@ istioctl version
 
 
 ## istio operator yaml
-istioctl install -f istio_values.yaml
+istioctl install -f istio_values.yaml -n istio-system
