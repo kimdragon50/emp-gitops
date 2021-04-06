@@ -1,19 +1,19 @@
 apiVersion: networking.istio.io/v1alpha3
 kind: VirtualService
 metadata:
-  name: web-virtualservice
-  namespace: frontend
+  name: emp-virtualservice
+  namespace: backend
 spec:
   gateways:
-  - web-gateway
+  - emp-gateway
   hosts:
-  - "web.kimdragon50.ml"
+  - "emp.kimdragon50.ml"
   http:
   - match:
     - uri:
         prefix: /
     route:
     - destination:
-        host: web-api
+        host: emp-api
         port:
-          number: 80
+          number: 8080

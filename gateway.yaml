@@ -1,15 +1,15 @@
 apiVersion: networking.istio.io/v1alpha3
 kind: Gateway
 metadata:
-  name: web-gateway
-  namespace: frontend
+  name: emp-gateway
+  namespace: backend
 spec:
   selector:
     istio: ingressgateway
   servers:
   - port:
-      number: 80
+      number: 8080
       name: http
       protocol: HTTP
     hosts:
-    - "web.kimdragon50.ml"
+    - "emp.kimdragon50.ml"

@@ -1,19 +1,19 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: frontend-web
-  namespace: frontend
+  name: backend-emp
+  namespace: backend
   labels:
-    app: frontend
+    app: backend
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: frontend-web
+      app: backend-emp
   template:
     metadata:
       labels:
-        app: frontend-web
+        app: backend-emp
     spec:
       affinity:
         nodeAffinity:
@@ -23,13 +23,13 @@ spec:
               - key: nodegroup-type
                 operator: In
                 values:
-                - FRONTEND
+                - BACKEND
       terminationGracePeriodSeconds: 30
       containers:
-        - name: frotned-web
-          image: 058475846659.dkr.ecr.ap-northeast-2.amazonaws.com/frontend-web
+        - name: backend-emp
+          image: 058475846659.dkr.ecr.ap-northeast-2.amazonaws.com/backend-emp
           ports:
-            - containerPort: 80
+            - containerPort: 8080
 #          resources:
 #            requests:
 #              cpu: "30m"
