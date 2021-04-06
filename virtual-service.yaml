@@ -2,7 +2,7 @@ apiVersion: networking.istio.io/v1alpha3
 kind: VirtualService
 metadata:
   name: web-virtualservice
-  namespace: frontend-web
+  namespace: frontend
 spec:
   gateways:
   - web-gateway
