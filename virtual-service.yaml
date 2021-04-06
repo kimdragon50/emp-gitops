@@ -1,0 +1,19 @@
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: web-virtualservice
+  namespace: frontend-web
+spec:
+  gateways:
+  - web-gateway
+  hosts:
+  - "web.kimdragon50.ml"
+  http:
+  - match:
+    - uri:
+        prefix: /
+    route:
+    - destination:
+        host: web-api
+        port:
+          number: 80
