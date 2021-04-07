@@ -1,19 +1,17 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: frontend-web
+  name: web-api
   namespace: frontend
-  labels:
-    app: frontend
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: frontend-web
+      app: web-api
   template:
     metadata:
       labels:
-        app: frontend-web
+        app: web-api
     spec:
       affinity:
         nodeAffinity:
@@ -26,7 +24,7 @@ spec:
                 - FRONTEND
       terminationGracePeriodSeconds: 30
       containers:
-        - name: frotned-web
+        - name: web-api
           image: 058475846659.dkr.ecr.ap-northeast-2.amazonaws.com/frontend-web
           ports:
             - containerPort: 80
