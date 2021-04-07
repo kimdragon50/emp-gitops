@@ -3,7 +3,7 @@ kind: IstioOperator
 spec:
   addonComponents:
     grafana:
-      enabled: true
+      enabled: false
     istiocoredns:
       enabled: false
     tracing:
@@ -19,9 +19,15 @@ spec:
       - enabled: true
     base:
       enabled: true
+    citadel:
+      enabled: false
     cni:
       enabled: false
     istiodRemote:
+      enabled: false
+    policy:
+      enabled: true
+    telemetry:
       enabled: false
   values:
     sidecarInjectorWebhook:
@@ -32,7 +38,13 @@ spec:
           service.beta.kubernetes.io/aws-load-balancer-type: "nlb"
           service.beta.kubernetes.io/aws-load-balancer-internal: "true"
           service.beta.kubernetes.io/aws-load-balancer-backend-protocol: http
-          service.beta.kubernetes.io/aws-load-balancer-ssl-cert: arn:aws:acm:ap-northeast-2:058475846659:certificate/df4fb82a-32a9-4ee5-9aeb-0c483b85b2e0
-          service.beta.kubernetes.io/aws-load-balancer-ssl-ports: "https"
-          external-dns.alpha.kubernetes.io/hostname: web.kimdragon50.ml,emp.kimdragon50.ml,kiali.kimdragon50.ml,grafana.kimdragon50.ml
-          #service.beta.kubernetes.io/load-balancer-source-ranges: "10.144.0.0/16"
+          external-dns.alpha.kubernetes.io/hostname: kiali.kimdragon50.ml, web.kimdragon50.ml, emp.kimdragon50.ml
+    global:
+      defaultNodeSelector:
+        nodegroup-type: MANAGE
+      configValidation: false
+      proxy:
+        resources:
+          limits:
+            cpu: "200m"
+            memory: "256Mi"

@@ -7,7 +7,12 @@ spec:
     cni:
       enabled: false
     egressGateways:
-    - enabled: false
+    - enabled: true
+      k8s:
+        resources:
+          requests:
+            cpu: 10m
+            memory: 40Mi
       name: istio-egressgateway
     ingressGateways:
     - enabled: true
@@ -38,34 +43,60 @@ spec:
       enabled: false
     pilot:
       enabled: true
+      k8s:
+        env:
+        - name: PILOT_TRACE_SAMPLING
+          value: "100"
+        resources:
+          requests:
+            cpu: 10m
+            memory: 100Mi
   hub: docker.io/istio
   meshConfig:
     accessLogFile: /dev/stdout
     defaultConfig:
       proxyMetadata: {}
     enablePrometheusMerge: true
+  profile: demo
   tag: 1.9.2
   values:
-    sidecarInjectorWebhook:
-      rewriteAppHTTPProbe: true
     base:
       enableCRDTemplates: false
       validationURL: ""
     gateways:
+      istio-egressgateway:
+        autoscaleEnabled: false
+        env: {}
+        name: istio-egressgateway
+        secretVolumes:
+        - mountPath: /etc/istio/egressgateway-certs
+          name: egressgateway-certs
+          secretName: istio-egressgateway-certs
+        - mountPath: /etc/istio/egressgateway-ca-certs
+          name: egressgateway-ca-certs
+          secretName: istio-egressgateway-ca-certs
+        type: ClusterIP
+        zvpn: {}
       istio-ingressgateway:
-        serviceAnnotations:
-          service.beta.kubernetes.io/aws-load-balancer-type: "nlb"
-          service.beta.kubernetes.io/aws-load-balancer-internal: "true"
-          service.beta.kubernetes.io/aws-load-balancer-backend-protocol: http
-          external-dns.alpha.kubernetes.io/hostname: web.kimdragon50.ml,emp.kimdragon50.ml
+        autoscaleEnabled: false
+        env: {}
         name: istio-ingressgateway
+        secretVolumes:
+        - mountPath: /etc/istio/ingressgateway-certs
+          name: ingressgateway-certs
+          secretName: istio-ingressgateway-certs
+        - mountPath: /etc/istio/ingressgateway-ca-certs
+          name: ingressgateway-ca-certs
+          secretName: istio-ingressgateway-ca-certs
+        type: LoadBalancer
+        zvpn: {}
     global:
       arch:
         amd64: 2
         ppc64le: 2
         s390x: 2
       configValidation: true
-      defaultNodeSelector: {nodegroup-type: MANAGE}
+      defaultNodeSelector: {}
       defaultPodDisruptionBudget:
         enabled: true
       defaultResources:
