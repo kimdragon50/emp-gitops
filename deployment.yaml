@@ -1,19 +1,17 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: backend-emp
+  name: emp-api
   namespace: backend
-  labels:
-    app: backend
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: backend-emp
+      app: emp-api
   template:
     metadata:
       labels:
-        app: backend-emp
+        app: emp-api
     spec:
       affinity:
         nodeAffinity:
@@ -26,7 +24,7 @@ spec:
                 - BACKEND
       terminationGracePeriodSeconds: 30
       containers:
-        - name: backend-emp
+        - name: emp-api
           image: 058475846659.dkr.ecr.ap-northeast-2.amazonaws.com/backend-emp
           ports:
             - containerPort: 8080
