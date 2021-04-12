@@ -51,7 +51,7 @@ data:
       @id in_tail_container_logs
       @label @containers
       path /var/log/containers/*.log
-      exclude_path ["/var/log/containers/cloudwatch-agent*", "/var/log/containers/fluentd*"]
+      exclude_path ["/var/log/containers/cloudwatch-agent*", "/var/log/containers/fluentd*"] 
       pos_file /var/log/fluentd-containers.log.pos
       tag *
       read_from_head true
