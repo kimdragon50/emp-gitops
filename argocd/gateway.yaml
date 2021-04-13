@@ -13,13 +13,13 @@ spec:
       protocol: HTTP
     hosts:
     - "argocd.kimdragon50.ml"
-  #   tls:
-  #     httpsRedirect: true
-  # - port:
-  #     number: 443
-  #     name: https
-  #     protocol: HTTPS
-  #   tls:
-  #     mode: PASSTHROUGH
-  #   hosts:
-  #   - "targocd.dev.lotte-ndp.int"
+    tls:
+      httpsRedirect: true
+  - port:
+      number: 443
+      name: https
+      protocol: HTTP
+    tls:
+      mode: PASSTHROUGH
+    hosts:
+    - "argocd.kimdragon50.ml"

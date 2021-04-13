@@ -17,13 +17,13 @@ spec:
         host: argocd-server.argocd.svc.cluster.local
         port:
           number: 80
-  # tls:
-  # - match:
-  #   - port: 443
-  #     sniHosts:
-  #     - targocd.dev.lotte-ndp.int
-  #   route:
-  #   - destination:
-  #       host: argocd-server.argocd.svc.cluster.local
-  #       port:
-  #         number: 443
+  tls:
+  - match:
+    - port: 443
+      sniHosts:
+      - "argocd.kimdragon50.ml"
+    route:
+    - destination:
+        host: argocd-server.argocd.svc.cluster.local
+        port:
+          number: 80
