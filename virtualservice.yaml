@@ -8,6 +8,7 @@ spec:
   - web-gateway
   hosts:
   - "web.kimdragon50.ml"
+  - "d23d6otnfos2ih.cloudfront.net"
   http:
   - match:
     - uri:
