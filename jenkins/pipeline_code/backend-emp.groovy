@@ -149,15 +149,14 @@ pipeline {
                         
                         git branch: "${opsBranch}", url: "${gitOpsUrl}", credentialsId: "jenkins_code_commit"
                        
-                        sh ("cat ./deployment/deployment.yaml")
+                        // sh ("cat ./deployment/deployment.yaml")
                         sh("sed -i \"s/${PROJECT_NAME}:.*/${PROJECT_NAME}:${TAG}/g\" ./deployment/deployment.yaml")
-                        sh ("cat ./deployment/deployment.yaml")
+                        // sh ("cat ./deployment/deployment.yaml")
 
-                        withCredentials([usernamePassword(credentialsId: 'jenkins_code_commit')]) 
-                        {
                         sh("git add .; git commit -m 'trigger generated tag : ${TAG}'")
-                        sh("git push origin ${opsBranch} ") 
-                        }
+                        sh("git remote -v")
+                        sh("git push") 
+
                         print "git push finished !!!"
                         env.gitOpsReulst = true
                     }
