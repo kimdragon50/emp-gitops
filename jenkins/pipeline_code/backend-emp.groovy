@@ -1,7 +1,7 @@
 /*
 ENV :  PROD
-PROJECT : ifmng
-CD_TYPE :  blue-green
+PROJECT : backend-emp
+CD_TYPE :  rolling
 */
 
 import groovy.transform.Field
@@ -19,7 +19,7 @@ def gitUrl = "https://git-codecommit.ap-northeast-2.amazonaws.com/v1/repos/${PRO
 def envBranch = "master"
 
 def gitOpsUrl = "https://git-codecommit.ap-northeast-2.amazonaws.com/v1/repos/${GIT_OPS_NAME}"
-def opsBranch = "master"
+def opsBranch = "backend-emp"
 
 def ecrRepository = "058475846659.dkr.ecr.ap-northeast-2.amazonaws.com"
 
@@ -139,20 +139,25 @@ pipeline {
         stage('GitOps') {
             when {
                 expression {
-                    return env.APPROVAL ==~ /(?i)(Y|YES|T|TRUE|ON|RUN)/
+                    return env.scanningResult ==~ /(?i)(Y|YES|T|TRUE|ON|RUN)/
                 }
             }
             steps {
                 script{
                     try {
-                        print("=================Docker Scanning start=================")   
+                        print("=================GitOps start=================")   
                         
-                        git branch: "${opsBranch}", url: "${gitUrl}", credentialsId: "jenkins_code_commit"
+                        git branch: "${opsBranch}", url: "${gitOpsUrl}", credentialsId: "jenkins_code_commit"
                        
-                        sh("sed -i \"s/${PROJECT_NAME}:.*/${PROJECT_NAME}:${TAG}/g\" ./${PROJECT_NAME}/deployment.yaml")
-                        
+                        sh ("cat ./deployment/deployment.yaml")
+                        sh("sed -i \"s/${PROJECT_NAME}:.*/${PROJECT_NAME}:${TAG}/g\" ./deployment/deployment.yaml")
+                        sh ("cat ./deployment/deployment.yaml")
+
+                        withCredentials([usernamePassword(credentialsId: 'jenkins_code_commit')]) 
+                        {
                         sh("git add .; git commit -m 'trigger generated tag : ${TAG}'")
                         sh("git push origin ${opsBranch} ") 
+                        }
                         print "git push finished !!!"
                         env.gitOpsReulst = true
                     }
@@ -176,6 +181,7 @@ pipeline {
             steps {
                 script {
                     try {
+                        print("=================argocd sync start=================") 
                         sh("argocd context ${argocdContext} ")
 
                         print "======project: ${PROJECT_NAME} sync"
