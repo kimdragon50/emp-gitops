@@ -1,0 +1,30 @@
+installCRDs: false
+
+controller:
+  nodeSelector: 
+    nodegroup-type: MANAGE
+
+repoServer:
+  nodeSelector: 
+    nodegroup-type: MANAGE
+
+server:
+  nodeSelector: 
+    nodegroup-type: MANAGE
+  extraArgs:
+  - --insecure
+  # - --basehref
+  # - /argocd
+
+dex:
+  nodeSelector: 
+    nodegroup-type: MANAGE
+
+redis:
+  nodeSelector: 
+    nodegroup-type: MANAGE
+
+configs:
+  secret:
+    argocdServerAdminPassword: $2b$10$QkGQL1L00nBebiuIXlCYFOOBUVkTt/Z96.mHLWGAUDvNXsM1AxNbS
+    argocdServerAdminPasswordMtime: 2020-07-01T00:00:00Z
