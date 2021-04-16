@@ -1,7 +1,7 @@
 /*
-ENV :  PROD
-PROJECT : backend-emp
-CD_TYPE :  rolling
+ENV :  DEV
+PROJECT : adminweb
+CD_TYPE :  rolling-update 
 */
 
 import groovy.transform.Field
@@ -10,19 +10,21 @@ import java.time.format.DateTimeFormatter
 
 @Field def CONFIG_ENV ="prod"
 @Field def CLUSTER_ENV ="gsn-kym-eks"
-@Field def PROJECT_NAME = "backend-emp"
+@Field def PROJECT_NAME = "frontend-web"
 @Field def ECR_CREDENTIAL = "aws-ecr"
 
 @Field def GIT_OPS_NAME = "gitops"
-@Field def BASE_ECR = "backend-base"
+
+@Field def NPM_PATH = "/home/jenkins/.nvm/versions/node/v14.16.1/lib/node_modules/npm"
 
 def gitUrl = "https://git-codecommit.ap-northeast-2.amazonaws.com/v1/repos/${PROJECT_NAME}"
 def envBranch = "master"
 
 def gitOpsUrl = "https://git-codecommit.ap-northeast-2.amazonaws.com/v1/repos/${GIT_OPS_NAME}"
-def opsBranch = "backend-emp"
+def opsBranch = "frontend-web"
 
 def ecrRepository = "058475846659.dkr.ecr.ap-northeast-2.amazonaws.com"
+
 
 @Field def argocdContext = "${CONFIG_ENV}-${CLUSTER_ENV}-context"
 
@@ -30,7 +32,7 @@ def ecrRepository = "058475846659.dkr.ecr.ap-northeast-2.amazonaws.com"
 
 pipeline {
     environment {        
-        PATH = "$PATH:/usr/local/bin/"  //skaffold, argocd, jq
+        PATH = "$PATH:/usr/local/bin/:${NPM_PATH}" 
       }
     agent any   
     
@@ -39,76 +41,75 @@ pipeline {
             steps {            
                 script {
                     try {
-                        print("=================Git clone start=================")
                         git branch: "${envBranch}", url: "${gitUrl}", credentialsId: "jenkins_code_commit" 
-                        def cmd = "aws ecr list-images --repository-name ${BASE_ECR} --output text --query \"imageIds[?imageTag=='latest'].imageDigest\" --region ap-northeast-2"
-                        def digest =  executeCmdReturn(cmd)
-                        
-                        // digest 
-                        sh("sed -i 's!<digest>.*!<digest>${digest}</digest>!g' /var/lib/jenkins/workspace/${JOB_NAME}/pom.xml")
-                        
-                        
                         env.gitcloneResult = true  
                     }
                     catch(Exception e) {
                         print(e)
                         cleanWs()
-                        // update_issue(41)
                         currentBuild.result = 'FAILURE'
                     }
                 }
             }
         }
 
-        stage('Build') {
+
+        stage('Build/Dockerizing') {
             when {
                 expression {
                     return env.gitcloneResult ==~ /(?i)(Y|YES|T|TRUE|ON|RUN)/
                 }
-            }              
+            }
             steps {            
                 script {
                     try {
-                        print("=================Build start=================")
-                        sh "aws ecr get-login-password --region ap-northeast-2 | docker login --username AWS --password-stdin ${ecrRepository}"
+
                         TAG = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd_HH-mm-ss"));
-                        
-                        print("TAG:"+ TAG)
-                        docker.withRegistry("https://${ecrRepository}","ecr:ap-northeast-2:aws-ecr"){
-                            sh "VER=${TAG} skaffold build -p ${CONFIG_ENV} --cache-artifacts=false"
-                        }
-                        env.buildResult = true  
+
+                        sh """
+                        aws ecr get-login-password --region ap-northeast-2 | docker login --username AWS --password-stdin ${ecrRepository}
+                        docker build -t ${PROJECT_NAME} .
+                        docker tag ${PROJECT_NAME}:latest ${ecrRepository}/${PROJECT_NAME}:${TAG}
+                        docker push ${ecrRepository}/${PROJECT_NAME}:${TAG}
+                        """
+
+                        env.dockerBuildResult=true
+ 
                     }
                     catch(Exception e) {
                         print(e)
-                        // update_issue(41)
+                        env.dockerBuildResult=false
                         currentBuild.result = 'FAILURE'
-                    }
-                    finally {
-                        cleanWs()   
+                    }finally{
+                        cleanWs()
                     }
                 }
             }
         }
+        
+
         stage('Docker Scanning') {
             when {
                 expression {
-                    return env.buildResult ==~ /(?i)(Y|YES|T|TRUE|ON|RUN)/
+                    return env.dockerBuildResult ==~ /(?i)(Y|YES|T|TRUE|ON|RUN)/
                 }
             }
             steps {
                 script {
-                    try {        
-                        print("=================Docker Scanning start=================")                
-                        def cmd = "aws ecr describe-image-scan-findings --repository-name ${PROJECT_NAME} --image-id imageTag=${TAG} --region ap-northeast-2 --query \"imageScanStatus.status\" --region ap-northeast-2"
+                    try {                        
+                        def cmd = "aws ecr describe-image-scan-findings --repository-name ${PROJECT_NAME} --image-id imageTag=${TAG} --region ap-northeast-2 --query \"imageScanStatus.status\""
                         def result = ""
                         while(true) {
                             try {
-                                result = executeCmdReturn(cmd)
+                                result = withAWS(credentials:"aws-ecr") {
+                                    sh(returnStdout: true, script: cmd).trim()
+                                }
                             }
                             catch(Exception e) {
                                 print("--- Start Scan ---")
-                                sh "aws ecr start-image-scan --repository-name ${PROJECT_NAME} --image-id imageTag=${TAG} --region ap-northeast-2"       
+                                withAWS(credentials:"aws-ecr") {
+                                    sh "aws ecr start-image-scan --repository-name ${PROJECT_NAME} --image-id imageTag=${TAG} --region ap-northeast-2"       
+                                }
                                 sleep 3
                             }                           
                             print(result)
@@ -119,13 +120,15 @@ pipeline {
 
                         cmd = "aws ecr describe-image-scan-findings --repository-name ${PROJECT_NAME} --image-id imageTag=${TAG} --region ap-northeast-2 --query \"imageScanFindings.findingSeverityCounts\""
                         print("--- Scanning Result ---") 
-                        print(executeCmdReturn(cmd))
+                        scan_result = withAWS(credentials:"aws-ecr") {
+                            sh(returnStdout: true, script: cmd).trim()
+                        }
+                        print(scan_result)
 
                         env.scanningResult = true
                     }
                     catch(Exception e) {
                         print(e)
-                        // update_issue(41)
                         currentBuild.result = 'FAILURE'
                     }
                     finally {
@@ -134,7 +137,6 @@ pipeline {
                 }
             }
         }
-        
         stage('GitOps') {
             when {
                 expression {
@@ -144,23 +146,19 @@ pipeline {
             steps {
                 script{
                     try {
-                        print("=================GitOps start=================")   
-                        
+                        print "======deployment.yaml tag update====="
                         git branch: "${opsBranch}", url: "${gitOpsUrl}", credentialsId: "jenkins_code_commit"
                        
-                        // sh ("cat ./deployment/deployment.yaml")
                         sh("sed -i \"s/${PROJECT_NAME}:.*/${PROJECT_NAME}:${TAG}/g\" ./deployment/deployment.yaml")
-                        // sh ("cat ./deployment/deployment.yaml")
-
+                        
                         sh("git add .")
                         sh("git commit -m 'trigger generated tag : ${TAG}'")
-                        sh("git push origin ${opsBranch}") 
+                        sh("git push origin ${opsBranch} ") 
                         print "git push finished !!!"
                         env.gitOpsReulst = true
                     }
                     catch(Exception e) {
                         print(e)
-                        // update_issue(41)
                         currentBuild.result = 'FAILURE'
                     }
                     finally {
@@ -178,7 +176,6 @@ pipeline {
             steps {
                 script {
                     try {
-                        print("=================argocd sync start=================") 
                         sh("argocd context ${argocdContext} ")
 
                         print "======project: ${PROJECT_NAME} sync"
@@ -202,11 +199,9 @@ pipeline {
                             print "-----error sync timeout !!!------------"
                             error " Failure Reason:  Health Checking  Max Time Out"
                         }
-                        // update_issue(31)
                     }
                     catch(Exception e) {
                         print(e)
-                        // update_issue(41)
                         currentBuild.result = 'FAILURE'
                     }
                     finally {
@@ -217,10 +212,6 @@ pipeline {
             }
         } 
     }
-}
-
-def update_issue(transition_id) {
-    sh "curl -X POST -H \"X-API-KEY: ${API_KEY}\" -H \"x-issue-id: ${issue_id}\" -H \"x-transition-id: ${transition_id}\" -H \"BuildInfo: ${env.JOB_NAME}/${env.BUILD_NUMBER}\" -H \"Content-type: application/json\" ${AGW_URL}/done-issue"
 }
 
 def check_context() {
