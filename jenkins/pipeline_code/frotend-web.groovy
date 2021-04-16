@@ -41,6 +41,7 @@ pipeline {
             steps {            
                 script {
                     try {
+                        print("=================Git Clone start=================")   
                         git branch: "${envBranch}", url: "${gitUrl}", credentialsId: "jenkins_code_commit" 
                         env.gitcloneResult = true  
                     }
@@ -63,7 +64,7 @@ pipeline {
             steps {            
                 script {
                     try {
-
+                        print("=================Build/Dockerizing start=================")
                         TAG = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd_HH-mm-ss"));
 
                         sh """
@@ -87,7 +88,6 @@ pipeline {
             }
         }
         
-
         stage('Docker Scanning') {
             when {
                 expression {
@@ -96,20 +96,17 @@ pipeline {
             }
             steps {
                 script {
-                    try {                        
-                        def cmd = "aws ecr describe-image-scan-findings --repository-name ${PROJECT_NAME} --image-id imageTag=${TAG} --region ap-northeast-2 --query \"imageScanStatus.status\""
+                    try {        
+                        print("=================Docker Scanning start=================")                
+                        def cmd = "aws ecr describe-image-scan-findings --repository-name ${PROJECT_NAME} --image-id imageTag=${TAG} --region ap-northeast-2 --query \"imageScanStatus.status\" --region ap-northeast-2"
                         def result = ""
                         while(true) {
                             try {
-                                result = withAWS(credentials:"aws-ecr") {
-                                    sh(returnStdout: true, script: cmd).trim()
-                                }
+                                result = executeCmdReturn(cmd)
                             }
                             catch(Exception e) {
                                 print("--- Start Scan ---")
-                                withAWS(credentials:"aws-ecr") {
-                                    sh "aws ecr start-image-scan --repository-name ${PROJECT_NAME} --image-id imageTag=${TAG} --region ap-northeast-2"       
-                                }
+                                sh "aws ecr start-image-scan --repository-name ${PROJECT_NAME} --image-id imageTag=${TAG} --region ap-northeast-2"       
                                 sleep 3
                             }                           
                             print(result)
@@ -120,15 +117,13 @@ pipeline {
 
                         cmd = "aws ecr describe-image-scan-findings --repository-name ${PROJECT_NAME} --image-id imageTag=${TAG} --region ap-northeast-2 --query \"imageScanFindings.findingSeverityCounts\""
                         print("--- Scanning Result ---") 
-                        scan_result = withAWS(credentials:"aws-ecr") {
-                            sh(returnStdout: true, script: cmd).trim()
-                        }
-                        print(scan_result)
+                        print(executeCmdReturn(cmd))
 
                         env.scanningResult = true
                     }
                     catch(Exception e) {
                         print(e)
+                        // update_issue(41)
                         currentBuild.result = 'FAILURE'
                     }
                     finally {
@@ -137,6 +132,7 @@ pipeline {
                 }
             }
         }
+
         stage('GitOps') {
             when {
                 expression {
