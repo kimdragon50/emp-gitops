@@ -1,0 +1,9 @@
+nodeSelector:
+  nodegroup-type: MANAGE
+
+efsProvisioner:
+  efsFileSystemId: fs-f6933c96
+  awsRegion: ap-northeast-2
+  provisionerName: aws-efs
+  storageClass:
+    reclaimPolicy: Retain

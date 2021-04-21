@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: prometheus-pvc
+  namespace: istio-system
+  annotations:
+    volume.beta.kubernetes.io/storage-class: aws-efs
+  labels:
+    type: prometheus-pvc
+spec:
+  storageClassName: aws-efs
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 100Gi
