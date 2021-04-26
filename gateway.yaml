@@ -13,4 +13,15 @@ spec:
       protocol: HTTP
     hosts:
     - "web.kimdragon50.ml"
-    - "d23d6otnfos2ih.cloudfront.net"
+  - port:
+      number: 443
+      name: https-web
+      protocol: HTTP
+    hosts:
+    - "web.kimdragon50.ml"
+  - port:
+      number: 443
+      name: https-web-cf
+      protocol: HTTP
+    hosts:
+    - "web-cf.kimdragon50.ml"
