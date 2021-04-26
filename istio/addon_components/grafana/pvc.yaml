@@ -1,16 +1,16 @@
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: prometheus-pvc
-  namespace: prometheus
+  name: grafana-pvc
+  namespace: grafana
   annotations:
     volume.beta.kubernetes.io/storage-class: aws-efs
   labels:
-    type: prometheus-pvc
+    type: grafana-pvc
 spec:
   storageClassName: aws-efs
   accessModes:
     - ReadWriteMany
   resources:
     requests:
-      storage: 100Gi
+      storage: 10Gi

@@ -1,0 +1,6 @@
+grafana.ini:
+  server:
+    root_url: "%(protocol)s://%(domain)s/"
+
+adminUser: admin
+adminPassword: admin1234
