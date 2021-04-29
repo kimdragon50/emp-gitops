@@ -19,15 +19,9 @@ spec:
       - enabled: true
     base:
       enabled: true
-    citadel:
-      enabled: false
     cni:
       enabled: false
     istiodRemote:
-      enabled: false
-    policy:
-      enabled: true
-    telemetry:
       enabled: false
   values:
     sidecarInjectorWebhook:
