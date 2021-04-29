@@ -13,3 +13,9 @@ spec:
       protocol: HTTP
     hosts:
     - "web.kimdragon50.ml"
+  - port:
+      number: 443
+      name: https
+      protocol: HTTP
+    hosts:
+    - "web.kimdragon50.ml"
