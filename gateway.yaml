@@ -13,17 +13,3 @@ spec:
       protocol: HTTP
     hosts:
     - "web.kimdragon50.ml"
-    tls:
-      httpsRedirect: true
-  - port:
-      number: 443
-      name: https-web
-      protocol: HTTP
-    hosts:
-    - "web.kimdragon50.ml"
-  - port:
-      number: 80
-      name: http-cf
-      protocol: HTTP
-    hosts:
-    - "web-cf.kimdragon50.ml"	
