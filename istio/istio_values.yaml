@@ -101,7 +101,7 @@ spec:
         excludeIPRanges: ""
         excludeInboundPorts: ""
         excludeOutboundPorts: ""
-        image: proxyv2
+        image: 058475846659.dkr.ecr.ap-northeast-2.amazonaws.com/istio/proxyv2:1.9.2
         includeIPRanges: '*'
         logLevel: warning
         privileged: false
@@ -118,7 +118,7 @@ spec:
         statusPort: 15020
         tracer: zipkin
       proxy_init:
-        image: proxyv2
+        image: 058475846659.dkr.ecr.ap-northeast-2.amazonaws.com/istio/proxyv2:1.9.2
         resources:
           limits:
             cpu: 2000m
@@ -149,7 +149,7 @@ spec:
       enableProtocolSniffingForInbound: true
       enableProtocolSniffingForOutbound: true
       env: {}
-      image: pilot
+      image: 058475846659.dkr.ecr.ap-northeast-2.amazonaws.com/istio/pilot:1.9.2
       keepaliveMaxServerConnectionAge: 30m
       nodeSelector: {}
       replicaCount: 1
