@@ -58,8 +58,8 @@ spec:
           service.beta.kubernetes.io/aws-load-balancer-internal: "false"
           service.beta.kubernetes.io/aws-load-balancer-backend-protocol: http
           external-dns.alpha.kubernetes.io/hostname: prometheus.kimdragon50.ml,argocd.kimdragon50.ml,web.kimdragon50.ml,emp.kimdragon50.ml,grafana.kimdragon50.ml,kiali.kimdragon50.ml,jaeger.kimdragon50.ml
-          service.beta.kubernetes.io/aws-load-balancer-ssl-cert: arn:aws:acm:ap-northeast-2:058475846659:certificate/df4fb82a-32a9-4ee5-9aeb-0c483b85b2e0
-          service.beta.kubernetes.io/aws-load-balancer-ssl-ports: https
+          #service.beta.kubernetes.io/aws-load-balancer-ssl-cert: arn:aws:acm:ap-northeast-2:058475846659:certificate/df4fb82a-32a9-4ee5-9aeb-0c483b85b2e0
+          #service.beta.kubernetes.io/aws-load-balancer-ssl-ports: https
         name: istio-ingressgateway
     global:
       arch:
