@@ -4,7 +4,8 @@ metadata:
   name: web-api
   namespace: frontend
 spec:
-  replicas: 1
+  replicas: 2
+  revisionHistoryLimit: 3
   selector:
     matchLabels:
       app: web-api
