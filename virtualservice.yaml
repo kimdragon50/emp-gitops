@@ -17,6 +17,3 @@ spec:
         host: emp-api
         port:
           number: 8080
-    corsPolicy:
-      allowOrigin:
-      - "*"
