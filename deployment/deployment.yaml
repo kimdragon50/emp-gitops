@@ -4,7 +4,7 @@ metadata:
   name: emp-api
   namespace: backend
 spec:
-  replicas: 1
+  replicas: 2
   revisionHistoryLimit: 3
   selector:
     matchLabels:
