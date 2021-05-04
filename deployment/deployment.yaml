@@ -26,7 +26,7 @@ spec:
       terminationGracePeriodSeconds: 30
       containers:
         - name: emp-api
-          image: 058475846659.dkr.ecr.ap-northeast-2.amazonaws.com/backend-emp:2021-05-04_17-09-29.939
+          image: 058475846659.dkr.ecr.ap-northeast-2.amazonaws.com/backend-emp:2021-05-04_17-23-33.215
           ports:
             - containerPort: 8080
           resources:
