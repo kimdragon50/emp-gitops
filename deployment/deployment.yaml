@@ -28,10 +28,6 @@ spec:
           image: 058475846659.dkr.ecr.ap-northeast-2.amazonaws.com/frontend-web:2021-04-29_10-58-48
           ports:
             - containerPort: 80
-#          resources:
-#            requests:
-#              cpu: "30m"
-#              memory: "64Mi"
-#            limits:
-#              cpu: "50m"
-#              memory: "64Mi"
+         resources:
+           requests:
+             cpu: "300m"
