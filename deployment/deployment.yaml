@@ -26,7 +26,7 @@ spec:
       terminationGracePeriodSeconds: 30
       containers:
         - name: web-api
-          image: 058475846659.dkr.ecr.ap-northeast-2.amazonaws.com/frontend-web:2021-05-04_17-31-53
+          image: 058475846659.dkr.ecr.ap-northeast-2.amazonaws.com/frontend-web:2021-05-06_14-03-57
           ports:
             - containerPort: 80
           resources:
