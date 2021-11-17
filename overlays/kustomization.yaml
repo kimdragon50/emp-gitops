@@ -4,6 +4,7 @@ images:
 - name: /
   newName: /
 - name: /backend-emp
-  newTag: af8820a9d51295aa3d27f12ad9ebfbf6eb8a521f
+  newName: /backend-emp
+  newTag: 2e48493ccdf1b04c84c93a5fc94c24151df0e2ef
 resources:
 - ../deployment
