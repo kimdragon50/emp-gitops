@@ -3,5 +3,8 @@ kind: Kustomization
 images:
 - name: /
   newName: /
+- name: 058475846659.dkr.ecr.ap-northeast-2.amazonaws.com/frontend-web
+  newName: 058475846659.dkr.ecr.ap-northeast-2.amazonaws.com/frontend-web
+  newTag: 65b21a6645ec32f7f880834e832b3d313def6206
 resources:
 - ../../resources
