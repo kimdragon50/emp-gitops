@@ -1,6 +1,8 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 images:
+- name: /backend-emp
+  newTag: af8820a9d51295aa3d27f12ad9ebfbf6eb8a521f
 - name: 058475846659.dkr.ecr.ap-northeast-2.amazonaws.com/backend-emp
   newTag: d956ced91e06e1544e43dfc999acea81a0b673f1
 resources:
