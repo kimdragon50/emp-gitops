@@ -8,6 +8,6 @@ images:
   newTag: 2e48493ccdf1b04c84c93a5fc94c24151df0e2ef
 - name: 058475846659.dkr.ecr.ap-northeast-2.amazonaws.com/backend-emp
   newName: 058475846659.dkr.ecr.ap-northeast-2.amazonaws.com/backend-emp
-  newTag: ea7ad99c8bae14e80b182abf8bfc446fc3ae46e0
+  newTag: cf2787e551367d1903c17db02020fb52259b0ab3
 resources:
 - ../../deployment
