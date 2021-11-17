@@ -32,21 +32,21 @@ spec:
           resources:
             requests:
               cpu: "300m"
-          livenessProbe:
-            exec:
-              command:
-              - cat
-              - /tmp/healthy
-            initialDelaySeconds: 15 #15
-            periodSeconds: 20
-            failureThreshold: 3
-            timeoutSeconds: 1
-          readinessProbe:
-            exec:
-              command:
-              - cat
-              - /tmp/healthy
-            initialDelaySeconds: 15 # 15
-            periodSeconds: 10
-            failureThreshold: 3
-            timeoutSeconds: 1
+#           livenessProbe:
+#             exec:
+#               command:
+#               - cat
+#               - /tmp/healthy
+#             initialDelaySeconds: 15 #15
+#             periodSeconds: 20
+#             failureThreshold: 3
+#             timeoutSeconds: 1
+#           readinessProbe:
+#             exec:
+#               command:
+#               - cat
+#               - /tmp/healthy
+#             initialDelaySeconds: 15 # 15
+#             periodSeconds: 10
+#             failureThreshold: 3
+#             timeoutSeconds: 1
